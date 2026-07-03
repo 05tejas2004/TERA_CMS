@@ -1,369 +1,296 @@
 {% extends "base.html" %}
+
 {% block content %}
 <div class="container mt-4">
     <h2><i class="fas fa-shield-alt"></i> Admin Dashboard</h2>
     
     {% if request.args.get('status') %}
     <div class="alert alert-info d-flex justify-content-between align-items-center mt-3">
-        <span>
-            <i class="fas fa-filter"></i> 
-            Showing: <strong>{{ request.args.get('status') }}</strong> complaints
-        </span>
-        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-sm btn-outline-light">
-            <i class="fas fa-times"></i> Clear Filter
-        </a>
+        <span><i class="fas fa-filter"></i> Showing: <strong>{{ request.args.get('status') }}</strong> complaints</span>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-sm btn-outline-light"><i class="fas fa-times"></i> Clear Filter</a>
     </div>
     {% endif %}
 
     <div id="live-dashboard-container">
-        
-        <div class="row mt-4">
-            <div class="col-12">
-                <h4 class="text-primary mb-3"><i class="fas fa-clipboard-list"></i> Complaint Statistics</h4>
-            </div>
-        </div>
-        
+        <div class="row mt-4"><div class="col-12"><h4 class="text-primary mb-3"><i class="fas fa-clipboard-list"></i> Complaint Statistics</h4></div></div>
         <div class="row g-3">
-            <div class="col-6 col-md-3">
-                <a href="{{ url_for('admin_dashboard') }}" class="text-decoration-none">
-                    <div class="card bg-primary text-white h-100 shadow">
-                        <div class="card-body text-center py-4">
-                            <h1 class="display-4">{{ total }}</h1>
-                            <p class="mb-0">Total Complaints</p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-6 col-md-3">
-                <a href="{{ url_for('admin_dashboard') }}?status=Pending" class="text-decoration-none">
-                    <div class="card bg-warning text-dark h-100 shadow">
-                        <div class="card-body text-center py-4">
-                            <h1 class="display-4">{{ pending }}</h1>
-                            <p class="mb-0">Pending</p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-6 col-md-3">
-                <a href="{{ url_for('admin_dashboard') }}?status=Active" class="text-decoration-none">
-                    <div class="card bg-success text-white h-100 shadow">
-                        <div class="card-body text-center py-4">
-                            <h1 class="display-4">{{ active }}</h1>
-                            <p class="mb-0">Active</p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-6 col-md-3">
-                <a href="{{ url_for('admin_dashboard') }}?status=Closed" class="text-decoration-none">
-                    <div class="card bg-secondary text-white h-100 shadow">
-                        <div class="card-body text-center py-4">
-                            <h1 class="display-4">{{ closed }}</h1>
-                            <p class="mb-0">Closed</p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-        </div>
-        </div>
-    <div class="row mt-5">
-        <div class="col-12">
-            <h4 class="text-info mb-3"><i class="fas fa-cogs"></i> Quick Actions</h4>
+            <div class="col-6 col-md-3"><a href="{{ url_for('admin_dashboard') }}" class="text-decoration-none"><div class="card bg-primary text-white h-100 shadow"><div class="card-body text-center py-4"><h1 class="display-4">{{ total }}</h1><p class="mb-0">Total Complaints</p></div></div></a></div>
+            <div class="col-6 col-md-3"><a href="{{ url_for('admin_dashboard') }}?status=Pending" class="text-decoration-none"><div class="card bg-warning text-dark h-100 shadow"><div class="card-body text-center py-4"><h1 class="display-4">{{ pending }}</h1><p class="mb-0">Pending</p></div></div></a></div>
+            <div class="col-6 col-md-3"><a href="{{ url_for('admin_dashboard') }}?status=Active" class="text-decoration-none"><div class="card bg-success text-white h-100 shadow"><div class="card-body text-center py-4"><h1 class="display-4">{{ active }}</h1><p class="mb-0">Active</p></div></div></a></div>
+            <div class="col-6 col-md-3"><a href="{{ url_for('admin_dashboard') }}?status=Closed" class="text-decoration-none"><div class="card bg-secondary text-white h-100 shadow"><div class="card-body text-center py-4"><h1 class="display-4">{{ closed }}</h1><p class="mb-0">Closed</p></div></div></a></div>
         </div>
     </div>
-    
+
+    <div class="row mt-5"><div class="col-12"><h4 class="text-info mb-3"><i class="fas fa-cogs"></i> Quick Actions</h4></div></div>
     <div class="row g-3 mb-5">
-        <div class="col-12 col-md-6">
-            <a href="{{ url_for('user_management') }}" class="btn btn-outline-light w-100 py-4 h-100">
-                <i class="fas fa-users fa-2x mb-2"></i>
-                <h5>User Management</h5>
-                <small class="text-muted">View, Approve, Delete</small>
-            </a>
-        </div>
-        <div class="col-12 col-md-6">
-            <a href="{{ url_for('admin_statistics') }}" class="btn btn-outline-warning w-100 py-4 h-100">
-                <i class="fas fa-chart-bar fa-2x mb-2"></i>
-                <h5>Statistics</h5>
-                <small class="text-muted">Charts & Graphs</small>
-            </a>
-        </div>
-    </div>
-        
-        <div class="row mt-5">
-            <div class="col-12">
-                <div class="card bg-dark shadow">
-                    <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0"><i class="fas fa-user-clock"></i> Pending User Approvals</h5>
-                        <span class="badge bg-dark">{{ pending_users|length }}</span>
-                    </div>
-                    <div class="card-body">
-                        {% if pending_users %}
-                        <div class="table-responsive">
-                            <table class="table table-dark table-striped table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Username</th>
-                                        <th>Role</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for user in pending_users %}
-                                    <tr>
-                                        <td>{{ user.name }}</td>
-                                        <td>{{ user.username }}</td>
-                                        <td><span class="badge bg-info">{{ user.role }}</span></td>
-                                        <td>
-                                            <a href="{{ url_for('approve_user', user_id=user.id) }}" class="btn btn-success btn-sm">
-                                                <i class="fas fa-check"></i> Approve
-                                            </a>
-                                            <a href="{{ url_for('reject_user', user_id=user.id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Reject this user?')">
-                                                <i class="fas fa-times"></i> Reject
-                                            </a>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                        {% else %}
-                        <p class="text-muted text-center py-3"><i class="fas fa-check-circle"></i> No pending users.</p>
-                        {% endif %}
-                    </div>
+        <div class="col-12 col-md-4 col-lg-2.4"><a href="{{ url_for('user_management') }}" class="btn btn-outline-light w-100 py-4 h-100"><i class="fas fa-users fa-2x mb-2"></i><h5>User Management</h5><small class="text-muted">View, Approve, Delete</small></a></div>
+        <div class="col-12 col-md-4 col-lg-2.4"><a href="{{ url_for('admin_statistics') }}" class="btn btn-outline-warning w-100 py-4 h-100"><i class="fas fa-chart-bar fa-2x mb-2"></i><h5>Statistics</h5><small class="text-muted">Charts & Graphs</small></a></div>
+        <div class="col-12 col-md-4 col-lg-2.4"><a href="{{ url_for('admin_attendance') }}" class="btn btn-outline-info w-100 py-4 h-100"><i class="fas fa-user-check fa-2x mb-2"></i><h5>Attendance Management</h5><small class="text-muted">Verify & Export</small></a></div>
+
+        <div class="col-12 col-md-4 col-lg-2.4">
+            <div class="card border-info bg-transparent w-100 p-3 h-100 text-center d-flex flex-column justify-content-center">
+                <i class="fas fa-calendar-alt text-info fa-2x mb-2"></i>
+                <h5 class="text-light">Monthwise Report</h5>
+                <div class="my-2">
+                    <input type="month" id="monthPickerInput" class="form-control form-control-sm bg-dark text-light border-secondary text-center" required>
                 </div>
+                <button type="button" onclick="triggerMonthwiseDownload()" class="btn btn-info btn-sm w-100 text-dark fw-bold"><i class="fas fa-file-excel"></i> Download Report</button>
             </div>
         </div>
-        
-        <div class="row mt-4">
-    <div class="col-12">
-        <div class="card bg-dark shadow">
-            <div class="card-header bg-info text-dark d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">
-                    <i class="fas fa-list"></i> 
-                    {% if request.args.get('status') %}
-                        {{ request.args.get('status') }} Complaints
-                    {% else %}
-                        All Complaints
+
+        <div class="col-12 col-md-4 col-lg-2.4">
+            <div class="card border-success bg-transparent w-100 p-3 h-100 text-center d-flex flex-column justify-content-center">
+                <form action="{{ url_for('upload_complaints') }}" method="POST" enctype="multipart/form-data">
+                    <i class="fas fa-file-excel text-success fa-2x mb-2"></i>
+                    <h5 class="text-light">Import Complaints</h5>
+                    <div class="input-group input-group-sm my-2"><input type="file" name="file" class="form-control bg-dark text-light border-secondary" accept=".xlsx, .xls" required></div>
+                    <button type="submit" class="btn btn-success btn-sm w-100"><i class="fas fa-upload"></i> Upload Excel</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-4 col-lg-2.4">
+            <div class="card border-danger bg-transparent w-100 p-3 h-100 text-center d-flex flex-column justify-content-center">
+                <form action="{{ url_for('admin_mass_delete_complaints') }}" method="POST" onsubmit="return confirmMassDelete()">
+                    <i class="fas fa-trash text-danger fa-2x mb-2"></i>
+                    <h5 class="text-light">Mass Delete</h5>
+                    <div class="my-2">
+                        <input type="month" name="delete_month" id="deleteMonthInput" class="form-control form-control-sm bg-dark text-light border-danger text-center" required>
+                    </div>
+                    <button type="submit" class="btn btn-danger btn-sm w-100"><i class="fas fa-exclamation-triangle"></i> Full Month</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card bg-dark shadow">
+                <div class="card-header bg-info text-dark d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <h5 class="mb-0"><i class="fas fa-list"></i> {% if request.args.get('status') %}{{ request.args.get('status') }} Complaints{% else %}All Complaints{% endif %}</h5>
+                    
+                    <div class="d-flex align-items-center gap-2 ms-auto">
+                        <div class="input-group input-group-sm" style="max-width: 250px;">
+                            <span class="input-group-text bg-dark text-info border-secondary"><i class="fas fa-search"></i></span>
+                            <input type="text" id="adminSearch" class="form-control bg-dark text-light border-secondary" placeholder="Search complaints..." onkeyup="filterAdmin()">
+                        </div>
+                        <span class="badge bg-dark" id="rowCountBadge">{{ pagination.total }}</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    
+                    <div id="top-scrollbar-wrapper" style="overflow-x: auto; overflow-y: hidden; width: 100%; height: 16px; margin-bottom: 8px;">
+                        <div id="top-scrollbar-spacer" style="height: 1px; width: 100%;"></div>
+                    </div>
+
+                    <div class="table-responsive" id="main-table-wrapper" style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+                        <table class="table table-dark table-striped table-hover mt-1" id="adminTable" style="width: 100%; white-space: nowrap;">
+                            <thead class="table-secondary">
+                                <tr>
+                                    <th>Complaint ID</th><th>Registration</th><th>Category</th><th>Location</th><th>Raised By</th><th>Title</th><th>Accepted Time</th><th>Accepted By</th><th>Verification Sent</th><th>Partially Resolved Time</th><th>Closed By</th><th>Closed Time</th>
+                                    <th style="min-width: 300px; white-space: normal;">Reason</th>
+                                    <th>Description</th><th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for c in filtered_complaints %}
+                                <tr class="admin-row">
+                                    <td><a href="{{ url_for('view_single_complaint', id=c.id) }}" target="_blank" class="text-info font-weight-bold text-decoration-none"><strong>{{ c.complaint_id }}</strong></a></td>
+                                    <td>{{ c.created_at.strftime('%d-%m-%y %H:%M') if c.created_at else '' }}</td>
+                                    <td><span class="badge bg-secondary">{{ c.category[:10] }}</span></td>
+                                    <td>{{ c.location[:12] }}</td>
+                                    <td>{% for u in all_users %}{% if u.id == c.created_by %}{{ u.name }}{% endif %}{% endfor %}</td>
+                                    <td>{{ c.title[:20] }}</td>
+                                    <td>{{ c.accepted_at.strftime('%d-%m-%y %H:%M') if c.accepted_at else '' }}</td>
+                                    <td>
+                                        {# Accepted By is the FieldEngineer who accepted the complaint (Complaint.assigned_to) #}
+                                        {% if c.assigned_to %}
+                                            {% for u in all_users %}
+                                                {% if u.id|string == c.assigned_to|string %}
+                                                    {{ 'Worker accepted as ' ~ u.name }}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            -
+                                    
+                                    <td>{{ c.submitted_at.strftime('%d-%m-%y %H:%M') if c.submitted_at }}</td>
+                                    
+                                    <!-- NEW CELL: PARTIALLY RESOLVED TIMESTAMP -->
+                                    <td>{{ c.partially_resolved_at.strftime('%d-%m-%y %H:%M') if c.partially_resolved_at else '' }}</td>
+                                    
+                                    <td>
+                                        {# Show the user who changed status to Closed/Closed (or resolved_by as fallback) #}
+                                        {% for u in all_users %}
+                                            {% if u.id|string == (c.closed_by or c.resolved_by)|string %}
+                                                {{ u.name }}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </td>
+                                    
+                                    <td>
+                                        {% if c.closed_at and c.created_at %}
+                                            {{ ((c.closed_at - c.created_at).total_seconds() / 3600)|int }}h {{ (((c.closed_at - c.created_at).total_seconds() % 3600) / 60)|int }}m
+                                            <div class="small text-muted">({{ c.closed_at.strftime('%d-%m-%y %H:%M') }})</div>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    
+                                    <td>
+                                        <div style="min-width: 300px; white-space: normal; word-break: break-word;">
+                                            {{ c.resolution_remarks or '' }}
+                                        </div>
+                                    </td>
+                                    
+                                    <td>{{ c.description[:50] }}</td>
+                                    <td>
+                                        <div class="d-flex gap-1 align-items-center">
+                                            <form method="POST" action="{{ url_for('admin_update_status', comp_id=c.id) }}" class="d-flex gap-1 mb-0">
+                                                <select name="status" class="form-control bg-dark text-light" style="min-width: 150px;">
+                                                    <option value="Pending" {% if c.status == 'Pending' %}selected{% endif %}>Pending</option>
+                                                    <option value="Partially Resolved" {% if c.status == 'Partially Resolved' %}selected{% endif %}>Partially Resolved</option>
+                                                    <option value="Closed" {% if c.status == 'Closed' %}selected{% endif %}>Closed</option>
+                                                </select>
+                                                <button type="submit" class="btn btn-primary"><i class="fas fa-check"></i></button>
+                                            </form>
+                                            <a href="{{ url_for('admin_delete_complaint', comp_id=c.id) }}" 
+                                               class="btn btn-danger" 
+                                               onclick="return confirm('Are you absolutely sure you want to delete complaint {{ c.complaint_id }}? This action cannot be undone.');">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {% if pagination.pages > 1 %}
+                    <nav class="mt-4 d-flex justify-content-center">
+                        <ul class="pagination pagination-sm mb-0">
+                            <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}">
+                                <a class="page-item page-link bg-dark text-info border-secondary" href="{{ url_for('admin_dashboard', page=pagination.prev_num, status=request.args.get('status', '')) }}">
+                                    <i class="fas fa-chevron-left"></i> Previous
+                                </a>
+                            </li>
+
+                            {% for page_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                                {% if page_num %}
+                                    <li class="page-item {% if page_num == pagination.page %}active{% endif %}">
+                                        <a class="page-link {% if page_num == pagination.page %}bg-info text-dark border-info fw-bold{% else %}bg-dark text-light border-secondary{% endif %}" href="{{ url_for('admin_dashboard', page=page_num, status=request.args.get('status', '')) }}">
+                                            {{ page_num }}
+                                        </a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled"><span class="page-link bg-dark text-muted border-secondary">...</span></li>
+                                {% endif %}
+                            {% endfor %}
+
+                            <li class="page-item {% if not pagination.has_next %}disabled{% endif %}">
+                                <a class="page-item page-link bg-dark text-info border-secondary" href="{{ url_for('admin_dashboard', page=pagination.next_num, status=request.args.get('status', '')) }}">
+                                    Next <i class="fas fa-chevron-right"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                    <div class="text-center text-muted small mt-2">
+                        Showing page {{ pagination.page }} of {{ pagination.pages }} (Total rows: {{ pagination.total }})
+                    </div>
                     {% endif %}
-                </h5>
-                <span class="badge bg-dark">{{ filtered_complaints|length }}</span>
-            </div>
-            
-            <div class="card-body pb-0">
-                <div class="row align-items-center">
-                    <div class="col-md-6">
-                        <div class="input-group">
-                            <span class="input-group-text bg-secondary text-white"><i class="fas fa-search"></i></span>
-                            <input type="text" id="adminSearch" class="form-control" placeholder="Search complaints..." onkeyup="filterAdmin()">
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center mb-3 gap-2">
-    <h5 class="text-light mb-0">Filtered Results</h5>
-    
-    <div class="d-flex justify-content-between align-items-center mb-3">
-    <h5 class="text-light mb-0">Get Report </h5>
-    <div class="d-flex gap-2">
-        <a href="{{ url_for('generate_report', format='excel', status=request.args.get('status', ''), search_filter=request.args.get('search_filter', '')) }}" class="btn btn-sm btn-success d-flex align-items-center gap-1">
-            <i class="fas fa-file-excel"></i> Export Excel
-        </a>
-        
-        <a href="{{ url_for('generate_report', format='pdf', status=request.args.get('status', ''), search_filter=request.args.get('search_filter', '')) }}" class="btn btn-sm btn-danger d-flex align-items-center gap-1">
-            <i class="fas fa-file-pdf"></i> Export PDF
-        </a>
-    </div>
-</div>
-
 
                 </div>
             </div>
-            
-            <div class="card-body">
-    <div class="table-responsive">
-        <table class="table table-dark table-striped table-hover" id="adminTable">
-            <thead class="table-secondary">
-                <tr>
-                    <th style="width:10%">Complaint ID</th>
-                    <th style="width:10%">Title</th>
-                    <th>Description</th>
-                    <th style="width:8%">Category</th>
-                    <th style="width:10%">Location</th>
-                    <th style="width:10%">Accepted by</th> <th style="width:10%">Resolved by</th> <th style="width:8%">Created</th>
-                    <th style="width:8%">Accepted</th>
-                    <th style="width:6%">Time</th>
-                    <th style="width:14%">Reason</th>
-                    <th style="width:10%">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for c in filtered_complaints %}
-                <tr class="admin-row">
-                    <td>
-    <a href="{{ url_for('view_single_complaint', id=c.id) }}" target="_blank" class="text-info font-weight-bold text-decoration-none">
-        <i class="fas fa-external-link-alt small me-1"></i> <strong>{{ c.complaint_id }}</strong>
-    </a>
-</td>
-                    <td>{{ c.title[:20] }}</td>
-                    <td>
-                        <div style="max-width: 180px; max-height: 75px; overflow-y: auto;" class="small text-muted text-break">
-                            {{ c.description or '-' }}
-                        </div>
-                    </td>
-                    <td><span class="badge bg-secondary">{{ c.category[:10] }}</span></td>
-                    <td>{{ c.location[:12] }}</td>
-                    
-                    <td>
-                        {% if c.assigned_to %}
-                            {% set matched_assignee = none %}
-                            {% for u in all_users %}
-                                {% if u.id|string == c.assigned_to|string %}
-                                    {% set matched_assignee = u %}
-                                {% endif %}
-                            {% endfor %}
-                            
-                            {% if matched_assignee %}
-                                <span class="badge bg-success">{{ matched_assignee.name[:10] }}</span>
-                            {% else %}
-                                <span class="text-muted">-</span>
-                            {% endif %}
-                        {% else %}
-                            <span class="text-muted">-</span>
-                        {% endif %}
-                    </td>
-
-                    <td>
-                        {% if c.resolved_by %}
-                            {% set matched_resolver = none %}
-                            {% for u in all_users %}
-                                {% if u.id|string == c.resolved_by|string %}
-                                    {% set matched_resolver = u %}
-                                {% endif %}
-                            {% endfor %}
-                            
-                            {% if matched_resolver %}
-                                <span class="badge bg-info">{{ matched_resolver.name[:10] }}</span>
-                            {% else %}
-                                <span class="text-muted">System Logged</span>
-                            {% endif %}
-                        {% else %}
-                            <span class="text-muted">-</span>
-                        {% endif %}
-                    </td>
-                    
-                    <td>{{ c.created_at.strftime('%Y-%m-%d') if c.created_at else '-' }}</td>
-                    
-                    <td>
-                        {% if c.assigned_at %}
-                            <span class="badge bg-info">{{ c.assigned_at.strftime('%Y-%m-%d') }}</span>
-                        {% else %}
-                            <span class="text-muted">-</span>
-                        {% endif %}
-                    </td>
-                    
-                    <td>
-                        {% if c.created_at and c.assigned_at %}
-                            {% set diff = c.assigned_at - c.created_at %}
-                            {% set hours = (diff.total_seconds() / 3600)|int %}
-                            {% if hours < 1 %}
-                                <span class="badge bg-warning text-dark">{{ (diff.total_seconds() / 60)|int }}m</span>
-                            {% elif hours < 24 %}
-                                <span class="badge bg-primary">{{ hours }}h</span>
-                            {% else %}
-                                <span class="badge bg-success">{{ (hours / 24)|int }}d</span>
-                            {% endif %}
-                        {% elif c.created_at %}
-                            {% set diff = current_time - c.created_at %}
-                            {% set hours = (diff.total_seconds() / 3600)|int %}
-                            {% if hours < 1 %}
-                                <span class="badge bg-warning text-dark">{{ (diff.total_seconds() / 60)|int }}m</span>
-                            {% elif hours < 24 %}
-                                <span class="badge bg-primary">{{ hours }}h</span>
-                            {% else %}
-                                <span class="badge bg-danger">{{ (hours / 24)|int }}d</span>
-                            {% endif %}
-                        {% else %}
-                            <span class="text-muted">-</span>
-                        {% endif %}
-                    </td>
-                    
-                    <td class="text-break small" title="{{ c.description }}">
-                        {% if c.description %}
-                            {{ c.description[:50] }}{% if c.description|length > 50 %}...{% endif %}
-                        {% else %}
-                            <span class="text-muted">No description provided</span>
-                        {% endif %}
-                    </td>
-                    
-                    <td>
-                        <form method="POST" action="{{ url_for('admin_update_status', comp_id=c.id) }}" class="d-flex gap-1">
-                            <select name="status" class="form-control form-control-sm bg-dark text-light" style="width: 75px;">
-                                <option value="Pending" {% if c.status == 'Pending' %}selected{% endif %}>Pending</option>
-                                <option value="Active" {% if c.status == 'Active' %}selected{% endif %}>Active</option>
-                                <option value="Closed" {% if c.status == 'Closed' %}selected{% endif %}>Closed</option>
-                            </select>
-                            <button type="submit" class="btn btn-sm btn-primary">
-                                <i class="fas fa-check"></i>
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        
-        <div id="noAdminResults" class="text-center py-3" style="display: none;">
-            <i class="fas fa-search text-muted" style="font-size: 2rem;"></i>
-            <p class="mt-2 text-muted">No matching complaints found.</p>
         </div>
     </div>
-</div>
-        </div>
-    </div>
-</div>
-
-    
 </div>
 
 <script>
-// Cache base URL cleanly inside Javascript scope
-const baseReportUrl = "{{ url_for('generate_report', status=request.args.get('status', '')) }}";
-
-function filterAdmin() {
-    var input = document.getElementById('adminSearch');
-    var filter = input.value.toLowerCase().trim();
-    var table = document.getElementById('adminTable');
-    if (!table) return;
-    
-    var rows = table.getElementsByClassName('admin-row');
-    var visibleCount = 0;
-    
-    for (var i = 0; i < rows.length; i++) {
-        var row = rows[i];
-        var text = row.textContent || row.innerText;
+    document.addEventListener("DOMContentLoaded", function() {
+        const d = new Date();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const standardMonthString = `${d.getFullYear()}-${m}`;
         
-        if (text.toLowerCase().indexOf(filter) > -1) {
-            row.style.display = "";
-            visibleCount++;
-        } else {
-            row.style.display = "none";
+        document.getElementById('monthPickerInput').value = standardMonthString;
+        document.getElementById('deleteMonthInput').value = standardMonthString;
+    });
+
+    function triggerMonthwiseDownload() {
+        const pickerVal = document.getElementById('monthPickerInput').value;
+        if (!pickerVal) {
+            alert("Please select a valid target month first.");
+            return;
         }
-    }
-    
-    var noResults = document.getElementById('noAdminResults');
-    if (noResults) {
-        noResults.style.display = (visibleCount === 0) ? "block" : "none";
+        window.location.href = "{{ url_for('generate_monthwise_report') }}?report_month=" + encodeURIComponent(pickerVal);
     }
 
-    // Dynamic URL parsing update loop for PDF reports
-    const reportBtn = document.getElementById('generateReportBtn');
-    if (reportBtn) {
-        if (filter !== '') {
-            const connector = baseReportUrl.includes('?') ? '&' : '?';
-            reportBtn.setAttribute('href', baseReportUrl + connector + 'search_filter=' + encodeURIComponent(filter));
+    function confirmMassDelete() {
+        const pickerVal = document.getElementById('deleteMonthInput').value;
+        if (!pickerVal) {
+            alert("Please select a valid month to wipe.");
+            return false;
+        }
+        
+        const primaryConfirm = confirm(`CRITICAL WARNING:\nYou are attempting to mass-delete ALL complaints recorded in the month of: ${pickerVal}.\n\nThis action will completely erase these records permanently from the database. Proceed?`);
+        if (!primaryConfirm) return false;
+
+        const validationPrompt = prompt(`To execute this purge, type exactly "DELETE ${pickerVal}" below:`);
+        if (validationPrompt === `DELETE ${pickerVal}`) {
+            return true;
         } else {
-            reportBtn.setAttribute('href', baseReportUrl);
+            alert("Verification mismatch. Deletion process aborted.");
+            return false;
         }
     }
-}
+
+    function filterAdmin() {
+        var input = document.getElementById('adminSearch');
+        var filter = input.value.toLowerCase().trim();
+        var rows = document.getElementsByClassName('admin-row');
+        var visibleCount = 0;
+        
+        for (var i = 0; i < rows.length; i++) {
+            if (rows[i].textContent.toLowerCase().indexOf(filter) > -1) {
+                rows[i].style.display = "";
+                visibleCount++;
+            } else {
+                rows[i].style.display = "none";
+            }
+        }
+        
+        document.getElementById('rowCountBadge').textContent = filter ? visibleCount : "{{ pagination.total }}";
+        
+        var baseReportUrl = "{{ url_for('generate_monthwise_report') }}";
+
+        var activeStatus = "{{ request.args.get('status', '') }}";
+        document.getElementById('exportReportBtn').setAttribute(
+            'href', 
+            baseReportUrl + '?status=' + encodeURIComponent(activeStatus) + '&search_filter=' + encodeURIComponent(filter)
+        );
+
+        syncScrollbarWidths();
+    }
+
+    const topWrapper = document.getElementById('top-scrollbar-wrapper');
+    const topSpacer = document.getElementById('top-scrollbar-spacer');
+    const tableWrapper = document.getElementById('main-table-wrapper');
+    const adminTable = document.getElementById('adminTable');
+
+    function syncScrollbarWidths() {
+        if (adminTable && topSpacer) {
+            topSpacer.style.width = adminTable.scrollWidth + 'px';
+        }
+    }
+
+    topWrapper.addEventListener('scroll', () => {
+        tableWrapper.scrollLeft = topWrapper.scrollLeft;
+    });
+
+    tableWrapper.addEventListener('scroll', () => {
+        topWrapper.scrollLeft = tableWrapper.scrollLeft;
+    });
+
+    window.addEventListener('load', syncScrollbarWidths);
+    window.addEventListener('resize', syncScrollbarWidths);
 </script>
 {% endblock %}
